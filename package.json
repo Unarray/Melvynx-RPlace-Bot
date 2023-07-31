@@ -1,0 +1,32 @@
+{
+  "name": "rplace-mel-reverse",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npx nodemon --exec node -r @swc-node/register ./src/index.ts",
+    "dev": "npx nodemon --exec node -r @swc-node/register ./src/index.ts dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@swc-node/register": "^1.6.6",
+    "cookie-muncher": "github:Bluzzi/cookie-muncher",
+    "jimp": "^0.22.10",
+    "socket.io-client": "^4.7.1"
+  },
+  "devDependencies": {
+    "@bluzzi/eslint-config": "^1.1.0",
+    "@types/node": "^20.4.5",
+    "eslint": "^8.45.0",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.1.6"
+  },
+  "eslintConfig": {
+    "extends": [
+      "@bluzzi"
+    ]
+  }
+}
