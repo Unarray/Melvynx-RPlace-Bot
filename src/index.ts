@@ -4,8 +4,8 @@ import { imageToRGB, loadResizedImage } from "#/utils/image";
 
 
 void (async() => {
-  const imagePath = "./full_mario.png";
-  const image = await loadResizedImage(process.argv.includes("reset") ? "./reset.png" : imagePath, VirtualMap.WIDTH, VirtualMap.HEIGHT);
+  const imagePath = "./resources/tetris.png";
+  const image = await loadResizedImage(process.argv.includes("reset") ? "./resources/reset.png" : imagePath, VirtualMap.WIDTH, VirtualMap.HEIGHT);
 
   const virutalTargetMap = rgbMatrixToVirtualMap(imageToRGB(image));
   const virtalMap = new VirtualMap(virutalTargetMap);

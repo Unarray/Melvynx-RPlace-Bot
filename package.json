@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npx nodemon --exec node -r @swc-node/register ./src/index.ts",
-    "dev": "npx nodemon --exec node -r @swc-node/register ./src/index.ts dev"
+    "dev": "npx nodemon --exec node -r @swc-node/register ./src/index.ts dev",
+    "tetris-start": "npx nodemon --exec node -r @swc-node/register ./src/index.tetris.ts",
+    "tetris-dev": "npx nodemon --exec node -r @swc-node/register ./src/index.tetris.ts dev"
   },
   "keywords": [],
   "author": "",

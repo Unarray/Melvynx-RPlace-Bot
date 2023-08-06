@@ -4,7 +4,7 @@ import { getMostIdentical, hexToRgb, isHexColor, type RGB } from "#/utils/color"
 export const rgbMatrixToVirtualMap = (matrix: RGB[][]): Map<number, string> => {
   const virtalMap: Map<number, string> = new Map();
 
-  const allowRDGColors = VirtualMap.ALLOWED_COLORS.map(v => {
+  const allowRDGColors = Object.values(VirtualMap.ALLOWED_COLORS).map(v => {
     if (isHexColor(v)) {
       return hexToRgb(v);
     }
@@ -15,6 +15,7 @@ export const rgbMatrixToVirtualMap = (matrix: RGB[][]): Map<number, string> => {
       blue: -1
     };
   });
+
 
   let y = 0;
   for (const row of matrix) {

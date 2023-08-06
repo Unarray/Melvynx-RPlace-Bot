@@ -7,12 +7,12 @@ export interface ServerToClientEvents {
   "pong": (pong: Pong) => CanBePromise<void>;
   "pixel change": (pixelChange: PixelChange) => CanBePromise<void>;
   "disconnected": () => CanBePromise<void>;
-  "message": (message: string) => CanBePromise<void>;
+  "message": (data: { message: string }) => CanBePromise<void>;
 }
 
 export interface ClientToServerEvents {
   "pixel change": (pixelChange: PixelChange) => CanBePromise<void>;
-  "message": (message: string) => CanBePromise<void>;
+  "message": (data: { message: string }) => CanBePromise<void>;
 }
 
 

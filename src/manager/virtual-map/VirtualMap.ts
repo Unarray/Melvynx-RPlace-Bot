@@ -7,19 +7,19 @@ export class VirtualMap {
 
   public static readonly WIDTH = 25;
 
-  public static readonly ALLOWED_COLORS = [
-    "#ff4500", // Red
-    "#00cc78", // Green
-    "#2450a5", // Blue
-    "#821f9f", // Purple
-    "#fed734", // Yellow
-    "#f9fafc", // White
-    "#000000" // Black
-  ];
+  public static readonly ALLOWED_COLORS = {
+    RED: "#ff4500", // Red
+    GREEN: "#00cc78", // Green
+    BLUE: "#2450a5", // Blue
+    PURPLE: "#821f9f", // Purple
+    YELLOW: "#fed734", // Yellow
+    WHITE: "#f9fafc", // White
+    BLACK: "#000000" // Black
+  };
 
-  private map: string[] = [];
+  public map: string[] = [];
 
-  private targetedMap: Map<number, string>;
+  public targetedMap: Map<number, string>;
 
   private lastDifferentPixelIndex = -1;
 
