@@ -1,43 +1,47 @@
 import { SocketManager } from "#/manager/socket-manager/SocketManager";
-import { VirtualMap, rgbMatrixToVirtualMap } from "#/manager/virtual-map";
+import { ConnectedVirtualMap, TargetVirtualMap, VirtualMap } from "#/manager/virtual-map";
+import { createSocket } from "#/socket";
 import { imageToRGB, loadResizedImage } from "#/utils/image";
 
 
 void (async() => {
-  const imagePath = "./resources/tetris.png";
+  const imagePath = "./resources/full_mario.png";
   const image = await loadResizedImage(process.argv.includes("reset") ? "./resources/reset.png" : imagePath, VirtualMap.WIDTH, VirtualMap.HEIGHT);
 
-  const virutalTargetMap = rgbMatrixToVirtualMap(imageToRGB(image));
-  const virtalMap = new VirtualMap(virutalTargetMap);
+  const connectedMap = new ConnectedVirtualMap(createSocket().socket);
 
-  await virtalMap.init();
+  await connectedMap.init();
 
+  const virtualMap = new TargetVirtualMap(
+    VirtualMap.rgbMatrixToVirtualMap(imageToRGB(image)),
+    connectedMap
+  );
   const socketManager = new SocketManager(100);
 
   await socketManager.connectSockets();
 
   console.log("CONNECTED !");
 
-  virtalMap.addPixelChangeHandler(async(pixelChange) => {
+  virtualMap.getConnectedMap().addPixelChangeHandler(async(pixelChange) => {
     const { pixelIndex } = pixelChange;
 
-    if (virtalMap.isValidPixel(pixelIndex)) return;
+    if (virtualMap.isValidPixel(pixelIndex)) return;
 
-    const targetedColor = virtalMap.getTargetedPixelColor(pixelIndex);
+    const color = virtualMap.getTargetedPixelColor(pixelIndex);
     const socketID = await socketManager.getNextAvailableSocket();
 
-    virtalMap.setPixelColor(pixelIndex, targetedColor);
-    void socketManager.placePixel(socketID, pixelIndex, targetedColor);
+    virtualMap.getConnectedMap().setPixelColor(pixelIndex, color);
+    void socketManager.placePixel(socketID, pixelIndex, color);
   });
 
-  let pixel = virtalMap.getNextDifferentPixel();
+  let pixel = virtualMap.getNextDifferentPixel();
 
   while (pixel) {
     const socketID = await socketManager.getNextAvailableSocket();
 
-    virtalMap.setPixelColor(pixel.pixelIndex, pixel.color);
+    virtualMap.getConnectedMap().setPixelColor(pixel.pixelIndex, pixel.color);
     void socketManager.placePixel(socketID, pixel.pixelIndex, pixel.color);
 
-    pixel = virtalMap.getNextDifferentPixel();
+    pixel = virtualMap.getNextDifferentPixel();
   }
 })();

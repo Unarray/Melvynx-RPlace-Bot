@@ -1,7 +1,7 @@
-import type { OnReceiveFunctionHandler, PixelChange, Socket } from "#/socket";
-import { createSocket } from "#/socket";
+import type { RGB } from "#/utils/color";
+import { getMostIdentical, hexToRgb, isHexColor } from "#/utils/color";
 
-export class VirtualMap {
+export abstract class VirtualMap {
 
   public static readonly HEIGHT = 25;
 
@@ -17,77 +17,72 @@ export class VirtualMap {
     BLACK: "#000000" // Black
   };
 
-  public map: string[] = [];
+  protected map = new Map<number, string>();
 
-  public targetedMap: Map<number, string>;
-
-  private lastDifferentPixelIndex = -1;
-
-  private socket!: Socket;
-
-  constructor(targetedMap: Map<number, string>) {
-    this.targetedMap = targetedMap;
-  }
-
-  public init = (): Promise<void> => {
-    return new Promise((resolve) => {
-      this.socket = createSocket().socket;
-
-      this.socket.on("init", (map) => {
-        this.map = map;
-        this.socket.on("pixel change", ({ pixelIndex, color }) => {
-          this.map[pixelIndex] = color;
-        });
-
-        resolve();
-      });
-    });
+  public static isIndexInRange = (index: number): boolean => {
+    return index >= 0 && index < VirtualMap.HEIGHT * VirtualMap.WIDTH;
   };
 
-  public getPixelColor = (index: number): string => {
-    return this.map[index];
+  public getPixelColor = (index: number): string | undefined => {
+    if (!VirtualMap.isIndexInRange(index)) throw new Error("Pixel isn't in VirtualMap range");
+
+    return this.map.get(index);
   };
 
-  public getTargetedPixelColor = (index: number): string => {
-    const color = this.targetedMap.get(index);
-
-    if (!color) {
-      throw new Error("Index out of range");
-    }
-
-    return color;
-  };
-
-  public isValidPixel = (index: number): boolean => {
-    const targetedColor = this.targetedMap.get(index);
-
-    if (!targetedColor) return true;
-
-    return this.map[index] === targetedColor;
-  };
 
   public setPixelColor = (index: number, color: string): void => {
-    this.map[index] = color;
+    if (!VirtualMap.isIndexInRange(index)) throw new Error("Pixel isn't in VirtualMap range");
+
+    this.map.set(index, color);
   };
 
-  public getNextDifferentPixel = (): PixelChange | null => {
-    for (const [index, color] of this.targetedMap) {
-      if (index == this.lastDifferentPixelIndex) continue;
-      if (this.getPixelColor(index) === color) continue;
+  // ----------------- //
+  //  STATICS METHODS  //
+  // ----------------- //
 
-      this.lastDifferentPixelIndex = index;
+  public static rgbMatrixToVirtualMap = (matrix: RGB[][]): Map<number, string> => {
+    const virtalMap: Map<number, string> = new Map();
+
+    const allowRDGColors = Object.values(VirtualMap.ALLOWED_COLORS).map(v => {
+      if (isHexColor(v)) {
+        return hexToRgb(v);
+      }
 
       return {
-        pixelIndex: index,
-        color
+        red: -1,
+        green: -1,
+        blue: -1
       };
+    });
+
+    let y = 0;
+
+    for (const row of matrix) {
+      let x = 0;
+
+      for (let pixel of row) {
+        if (pixel.red === -1) {
+          x++;
+          continue;
+        }
+
+        const colorToHex = (color: number): string => {
+          const hexadecimal = color.toString(16);
+
+          return hexadecimal.length == 1 ? "0" + hexadecimal : hexadecimal;
+        };
+
+        pixel = getMostIdentical(pixel, [...allowRDGColors]);
+
+        virtalMap.set(x + VirtualMap.HEIGHT * y, `#${colorToHex(pixel.red)}${colorToHex(pixel.green)}${colorToHex(pixel.blue)}`.toLowerCase());
+        x++;
+      }
+
+      x = 0;
+      y++;
     }
 
-    return null;
-  };
-
-  public addPixelChangeHandler = (handler: OnReceiveFunctionHandler<"pixel change">): void => {
-    this.socket.on("pixel change", handler);
+    return virtalMap;
   };
 
 }
