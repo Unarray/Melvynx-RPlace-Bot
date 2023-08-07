@@ -27,6 +27,14 @@ Load `./resources/full_mario.png` into local r/placejs
 npm run dev reset
 ```
 
+
+# Tetris Game
+## Features:
+- Next block preview
+- Commands `!score` & `!max-score`
+- Automatic game restart
+- Can be controll by placing a pixel on one of the buttons (red: left; green: right; blue: rotate; yellow: down;)
+
 Start the Tetris game into online r/placejs
 ```cmd
 npm run tetris-start
