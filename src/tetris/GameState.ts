@@ -1,12 +1,16 @@
-import { Bag } from "#/manager/tetris/Bag";
-import { Position } from "#/manager/tetris/Position";
-import { VirtualMap } from "#/manager/virtual-map";
+import { Bag } from "./Bag";
+import { Position } from "./Position";
 import { Block } from "./Block";
 import { GameGrid } from "./GameGrid";
+import { VirtualMap } from "#/manager/virtual-map";
 
-export class GameManager {
+export class GameState {
 
-  private grid = new GameGrid(22, 10, VirtualMap.ALLOWED_COLORS.WHITE);
+  public static readonly ROWS = 22;
+
+  public static readonly COLUMNS = 10;
+
+  private grid = new GameGrid(GameState.ROWS, GameState.COLUMNS, VirtualMap.ALLOWED_COLORS.WHITE);
 
   private score = 0;
 
@@ -110,37 +114,49 @@ export class GameManager {
     return true;
   };
 
-  public rotateBlock = (): void => {
+  public rotateBlock = (): boolean => {
     this.currentBlock.rotateClockwise();
 
     if (!this.blockFits()) {
       this.currentBlock.rotateCounterClockwise();
+      return false;
     }
+
+    return true;
   };
 
-  public moveBlockLeft = (): void => {
+  public moveBlockLeft = (): boolean => {
     this.currentBlock.move(0, -1);
 
     if (!this.blockFits()) {
       this.currentBlock.move(0, 1);
+      return false;
     }
+
+    return true;
   };
 
-  public moveBlockRight = (): void => {
+  public moveBlockRight = (): boolean => {
     this.currentBlock.move(0, 1);
 
     if (!this.blockFits()) {
       this.currentBlock.move(0, -1);
+      return false;
     }
+
+    return true;
   };
 
-  public moveBlockDown = (): void => {
+  public moveBlockDown = (): boolean => {
     this.currentBlock.move(1, 0);
 
     if (!this.blockFits()) {
       this.currentBlock.move(-1, 0);
       this.placeBlock();
+      return false;
     }
+
+    return true;
   };
 
   private isGameOver = (): boolean => {

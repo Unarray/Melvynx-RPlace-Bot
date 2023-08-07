@@ -13,8 +13,8 @@ void (async() => {
   await connectedMap.init();
 
   const virtualMap = new TargetVirtualMap(
-    VirtualMap.rgbMatrixToVirtualMap(imageToRGB(image)),
-    connectedMap
+    connectedMap,
+    VirtualMap.rgbMatrixToVirtualMap(imageToRGB(image))
   );
   const socketManager = new SocketManager(100);
 
