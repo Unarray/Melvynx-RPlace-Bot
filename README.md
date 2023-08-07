@@ -33,7 +33,7 @@ npm run dev reset
 - Next block preview
 - Commands `!score` & `!max-score`
 - Automatic game restart
-- Can be controll by placing a pixel on one of the buttons (red: left; green: right; blue: rotate; yellow: down;)
+- Can be controll by placing a pixel on one of the buttons (`red: left`; `green: right`; `blue: rotate`; `yellow: down`;)
 
 Start the Tetris game into online r/placejs
 ```cmd
