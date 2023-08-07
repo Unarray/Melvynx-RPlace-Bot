@@ -4,20 +4,25 @@ import type { ConnectedVirtualMap } from "./ConnectedVirtualMap";
 
 export class TargetVirtualMap extends VirtualMap {
 
-  public connectedMap: ConnectedVirtualMap;
+  private connectedMap: ConnectedVirtualMap;
 
   private lastDifferentPixelIndex = -1;
 
 
-  constructor(map: Map<number, string>, connectedMap: ConnectedVirtualMap) {
+  constructor(connectedMap: ConnectedVirtualMap, map = new Map<number, string>()) {
     super();
-
     this.map = map;
     this.connectedMap = connectedMap;
   }
 
   public getConnectedMap = (): ConnectedVirtualMap => {
     return this.connectedMap;
+  };
+
+  public fillMap = (color: typeof VirtualMap.ALLOWED_COLORS[keyof typeof VirtualMap.ALLOWED_COLORS]): void => {
+    for (const [index, _] of this.map) {
+      this.map.set(index, color);
+    }
   };
 
   public getTargetedPixelColor = (index: number): string => {
