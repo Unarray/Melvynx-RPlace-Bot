@@ -1,3 +1,5 @@
-export const randomID = (length = 6): string => {
-  return Math.random().toString(36).substring(2, length + 2);
+export const randomIP = (): string => {
+  const randomByte = (): number => Math.floor(Math.random() * 255) + 1;
+
+  return `${randomByte()}.${randomByte()}.${randomByte()}`;
 };

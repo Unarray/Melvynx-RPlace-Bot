@@ -1,10 +1,10 @@
 import { SOCKET_HEADER, WEBSOCKET_URL } from "./socket.const";
 import { io } from "socket.io-client";
-import { randomID } from "#/utils/random";
+import { randomIP } from "#/utils/random";
 import type { SocketData } from "./socket.type";
 
 export const createSocket = (): SocketData => {
-  const IP = randomID();
+  const IP = `BAITED-${randomIP()}`;
 
   return {
     socket: io(
