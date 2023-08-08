@@ -1,5 +1,5 @@
 import { z } from "zod";
 
 export const envDTO = z.object({
-  SOCKET_COUNT: z.number().positive()
+  SOCKET_COUNT: z.string().regex(/^\d+$/).transform(Number)
 });
