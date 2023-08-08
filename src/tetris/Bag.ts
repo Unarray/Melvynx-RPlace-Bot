@@ -1,4 +1,3 @@
-import { logger } from "#/utils/logger";
 import { randomInt } from "crypto";
 
 export class Bag<T> {
@@ -22,7 +21,6 @@ export class Bag<T> {
 
     do {
       this.nextItem = this.getRandomItem();
-      logger.info("do while !");
     } while (this.nextItem === item);
 
     return item;
