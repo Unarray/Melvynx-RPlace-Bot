@@ -21,11 +21,13 @@
     "dayjs": "^1.11.9",
     "jimp": "^0.22.10",
     "socket.io-client": "^4.7.1",
-    "tintify": "^1.0.0"
+    "tintify": "^1.0.0",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@bluzzi/eslint-config": "^1.1.0",
     "@types/node": "^20.4.5",
+    "dotenv": "^16.3.1",
     "eslint": "^8.45.0",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.1.6"

@@ -2,6 +2,7 @@ import { SocketManager } from "#/manager/socket-manager";
 import { ConnectedVirtualMap } from "#/manager/virtual-map";
 import { createSocket } from "#/socket";
 import { Position } from "#/tetris/Position";
+import { env } from "#/utils/env";
 import { Tetris } from "./Tetris";
 
 void (async() => {
@@ -9,7 +10,7 @@ void (async() => {
 
   await connectedMap.init();
 
-  const socketManager = new SocketManager(100);
+  const socketManager = new SocketManager(env.SOCKET_COUNT);
 
   await socketManager.connectSockets();
 

@@ -1,6 +1,7 @@
 import { SocketManager } from "#/manager/socket-manager/SocketManager";
 import { ConnectedVirtualMap, TargetVirtualMap, VirtualMap } from "#/manager/virtual-map";
 import { createSocket } from "#/socket";
+import { env } from "#/utils/env";
 import { imageToRGB, loadResizedImage } from "#/utils/image";
 
 
@@ -16,7 +17,7 @@ void (async() => {
     connectedMap,
     VirtualMap.rgbMatrixToVirtualMap(imageToRGB(image))
   );
-  const socketManager = new SocketManager(100);
+  const socketManager = new SocketManager(env.SOCKET_COUNT);
 
   await socketManager.connectSockets();
 
