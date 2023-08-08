@@ -1,35 +1,29 @@
+import { logger } from "#/utils/logger";
+import { randomInt } from "crypto";
+
 export class Bag<T> {
 
   private items: T[];
 
-  private bagItems: T[];
+
+  private nextItem: T;
 
   constructor(items: T[]) {
     this.items = [...items];
-    this.bagItems = this.shuffleBlocks();
+    this.nextItem = this.getRandomItem();
   }
 
-  public shuffleBlocks = (): T[] => {
-    const shuffledBlocks = [...this.items];
-
-    for (let i = shuffledBlocks.length - 1; i > 0; i--) {
-      const random = Math.floor(Math.random() * (i + 1));
-      [shuffledBlocks[i], shuffledBlocks[random]] = [shuffledBlocks[random], shuffledBlocks[i]];
-    }
-
-    return shuffledBlocks;
+  private getRandomItem = (): T => {
+    return this.items[randomInt(this.items.length)];
   };
 
   public getAndUpdate = (): T => {
-    const item = this.bagItems.shift();
+    const item = this.nextItem;
 
-    if (item === undefined) {
-      throw new Error("Impossible d'arriver ici...");
-    }
-
-    if (this.bagItems.length === 0) {
-      this.bagItems = this.shuffleBlocks();
-    }
+    do {
+      this.nextItem = this.getRandomItem();
+      logger.info("do while !");
+    } while (this.nextItem === item);
 
     return item;
   };
