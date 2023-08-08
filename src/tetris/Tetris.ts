@@ -12,6 +12,8 @@ import { MessageManager } from "#/manager/message-manager";
 
 export class Tetris {
 
+  public static readonly TICK_SPEED = 1000;
+
   private static sleep = (ms: number): Promise<void> => new Promise(r => setTimeout(r, ms));
 
   private static pixelsPositionWithOffset = (offset: Position, map: Map<number, string>): Map<number, string> => {
@@ -214,7 +216,7 @@ export class Tetris {
     })();
   }
 
-
+  // Update the VirtualMap grid with current game state
   private updateGridMap = (drawnCurrentBlock = false): void => {
     const offset = this.config.grid.offset;
 
@@ -243,6 +245,7 @@ export class Tetris {
     }
   };
 
+  // Update the VirtualMap blockPreview with current game state
   private updateBlockPreviewMap = (): void => {
     this.blockPreviewMap.fillMap(VirtualMap.ALLOWED_COLORS.WHITE);
     const block = this.gameState.getNextBlock();
@@ -254,6 +257,20 @@ export class Tetris {
         (position.row +  blockOffset.row) * VirtualMap.HEIGHT + position.column +  blockOffset.column,
         block.getColor()
       );
+    }
+  };
+
+  // Draw a virtual map on r/placejs
+  private drawVirtualMap = async(map: TargetVirtualMap): Promise<void> => {
+    let pixel = map.getNextDifferentPixel();
+
+    while (pixel) {
+      const socketID = await this.socketManager.getNextAvailableSocket();
+
+      map.getConnectedMap().setPixelColor(pixel.pixelIndex, pixel.color);
+      void this.socketManager.placePixel(socketID, pixel.pixelIndex, pixel.color);
+
+      pixel = map.getNextDifferentPixel();
     }
   };
 
@@ -278,7 +295,7 @@ export class Tetris {
       this.messageManager.sendMessage("New game launched!");
 
       while (!this.gameState.getGameOver()) {
-        await Tetris.sleep(1000);
+        await Tetris.sleep(Tetris.TICK_SPEED);
         await this.tick();
       }
 
@@ -288,14 +305,12 @@ export class Tetris {
 
       if (this.canRestart) {
         logger.info("Restart timer launched");
+        await Tetris.sleep(1000);
 
-        await Tetris.sleep(1000);
-        this.messageManager.sendMessage("Restart in: 3");
-        await Tetris.sleep(1000);
-        this.messageManager.sendMessage("Restart in: 2");
-        await Tetris.sleep(1000);
-        this.messageManager.sendMessage("Restart in: 1");
-        await Tetris.sleep(1000);
+        for (let i = 3; i > 0; i--) {
+          this.messageManager.sendMessage(`Restart in: ${i}`);
+          await Tetris.sleep(1000);
+        }
 
         this.gameState = new GameState();
       }
@@ -310,7 +325,7 @@ export class Tetris {
       this.maxScore = this.gameState.getScore();
     }
 
-    // Update grid VirtualMap with current state
+    // Update grid & blockPreview VirtualMaps with current game state
     this.updateGridMap(true);
     await this.drawVirtualMap(this.gridMap);
 
@@ -318,17 +333,5 @@ export class Tetris {
     await this.drawVirtualMap(this.blockPreviewMap);
   };
 
-  private drawVirtualMap = async(map: TargetVirtualMap): Promise<void> => {
-    let pixel = map.getNextDifferentPixel();
-
-    while (pixel) {
-      const socketID = await this.socketManager.getNextAvailableSocket();
-
-      map.getConnectedMap().setPixelColor(pixel.pixelIndex, pixel.color);
-      void this.socketManager.placePixel(socketID, pixel.pixelIndex, pixel.color);
-
-      pixel = map.getNextDifferentPixel();
-    }
-  };
 
 }
